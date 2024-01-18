@@ -2,4 +2,4 @@
 Knowledge_Transfer_based_BET_Training_for_YOLOv3
 
 
-https://github.com/aladdinpersson/Machine-Learning-Collection
+YOLOv3 Project from: https://github.com/aladdinpersson/Machine-Learning-Collection
