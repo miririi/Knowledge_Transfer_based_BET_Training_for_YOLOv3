@@ -116,15 +116,15 @@ def kt_train_fn(train_loader, model, teacher_model, optimizer, loss_fn, scaler, 
         #####################################################
         ################ KNOWLEDGE TRANSFER #################
         #####################################################
-            if epoch == 0 and counter == 0: ## VOR DEM TRAINING ERSTEN LOSS PLOTTEN!!!
+            """if epoch == 0 and counter == 0: ## VOR DEM TRAINING ERSTEN LOSS PLOTTEN!!!
                 print(final_l2_value)
                 print(loss)
                 loss += final_l2_value
                 plot_loss(loss, final_l2_value, epoch)
                 counter += 1
-            else: 
+            else: """
             
-                loss += final_l2_value
+            loss += final_l2_value
         
 
         l2_values_lst.append(final_l2_value)
@@ -136,7 +136,7 @@ def kt_train_fn(train_loader, model, teacher_model, optimizer, loss_fn, scaler, 
 
     mean_loss = sum(losses) / len(losses)
     mean_l2 = sum(l2_values_lst) / len(l2_values_lst)
-    plot_loss(mean_loss, mean_l2, epoch+1)
+    plot_loss(mean_loss, mean_l2, epoch+101)
         
 
 def main():
@@ -159,7 +159,7 @@ def main():
         #    config.CHECKPOINT_FILE, model, optimizer, config.LEARNING_RATE
         #)
         teacher_model.load_state_dict(torch.load('YOLOv3_weights.pt'))
-        error_model.load_state_dict(torch.load('YOLOv3_weights.pt'))
+        error_model.load_state_dict(torch.load('kt_error_YOLOv3_weights.pt'))
         print("Success!")
     
         
