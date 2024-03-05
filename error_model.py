@@ -33,7 +33,7 @@ class Quantization:
         return self.method(input)
 
 binarizepm1 = Quantization(binarizePM1.binarize)
-binarizepm1fi = SymmetricBitErrorsBinarizedPM1(binarizePM1FI.binarizeFI, 0.1)
+binarizepm1fi = SymmetricBitErrorsBinarizedPM1(binarizePM1FI.binarizeFI, 0.01)
 
 """ 
 Information about architecture config:

@@ -24,7 +24,7 @@ from loss import YoloLoss
 import warnings
 warnings.filterwarnings("ignore")
 
-writer = SummaryWriter("runs/YOLOv3")
+writer = SummaryWriter("runs/YOLOv3_kt_001")
 
 
 def train_fn(train_loader, model, optimizer, loss_fn, scaler, scaled_anchors, epoch):
@@ -102,12 +102,15 @@ def kt_train_fn(train_loader, model, teacher_model, optimizer, loss_fn, scaler, 
                 student_response = student_fr[idx].to(config.DEVICE)
 
                 for pic in range(teacher_response.size(0)): # Batch Size
+                    channel_l2 = 0
                     for channel_idx in range(teacher_response.size(1)): # Channel Size
                         l2_value = l2(teacher_response[pic][channel_idx][:][:], student_response[pic][channel_idx][:][:])
                         l2_value /= (teacher_response.size(2) * teacher_response.size(2)) # NORMIERUNG AUF PIXEL ANZAHL PASST!
-                        final_l2_value += l2_value
-                    
-                    final_l2_value /= teacher_response.size(1)
+                        #final_l2_value += l2_value
+                        channel_l2 += l2_value
+
+                    channel_l2 /= teacher_response.size(1)
+                    final_l2_value += channel_l2
                 
             final_l2_value = final_l2_value / 32 # Normierung auf Anzahl an Bildern
             
@@ -116,15 +119,15 @@ def kt_train_fn(train_loader, model, teacher_model, optimizer, loss_fn, scaler, 
         #####################################################
         ################ KNOWLEDGE TRANSFER #################
         #####################################################
-            """if epoch == 0 and counter == 0: ## VOR DEM TRAINING ERSTEN LOSS PLOTTEN!!!
+            if epoch == 0 and counter == 0: ## VOR DEM TRAINING ERSTEN LOSS PLOTTEN!!!
                 print(final_l2_value)
                 print(loss)
                 loss += final_l2_value
                 plot_loss(loss, final_l2_value, epoch)
                 counter += 1
-            else: """
+            else: 
             
-            loss += final_l2_value
+                loss += final_l2_value
         
 
         l2_values_lst.append(final_l2_value)
@@ -136,7 +139,7 @@ def kt_train_fn(train_loader, model, teacher_model, optimizer, loss_fn, scaler, 
 
     mean_loss = sum(losses) / len(losses)
     mean_l2 = sum(l2_values_lst) / len(l2_values_lst)
-    plot_loss(mean_loss, mean_l2, epoch+101)
+    plot_loss(mean_loss, mean_l2, epoch+1)
         
 
 def main():
@@ -159,7 +162,7 @@ def main():
         #    config.CHECKPOINT_FILE, model, optimizer, config.LEARNING_RATE
         #)
         teacher_model.load_state_dict(torch.load('YOLOv3_weights.pt'))
-        error_model.load_state_dict(torch.load('kt_error_YOLOv3_weights.pt'))
+        error_model.load_state_dict(torch.load('YOLOv3_weights.pt'))
         print("Success!")
     
         
